@@ -1,0 +1,153 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: #f1f5f9;
+    padding: 15px;
+}
+
+.container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 800px; /* Diperlebar agar muat bentuk tabel */
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.title {
+    color: #0f172a;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+th {
+    background-color: #475569;
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    text-align: left;
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+table input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+}
+
+table input:focus {
+    border-color: #25d366;
+}
+
+.btn-hapus {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.action-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-add {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-whatsapp {
+    background-color: #25d366;
+    color: white;
+}
+
+.btn-reset {
+    background-color: #ef4444;
+    color: white;
+}
+
+@media (min-width: 600px) {
+    .action-layout {
+        flex-direction: row;
+    }
+}
+
+/* Styling untuk Input Shift dan Nama di bagian atas */
+.header-inputs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    background-color: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px dashed #cbd5e1;
+}
+
+.header-inputs .input-box {
+    flex: 1;
+}
+
+.header-inputs label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.header-inputs input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+}
+
+.header-inputs input:focus {
+    border-color: #3b82f6;
+}

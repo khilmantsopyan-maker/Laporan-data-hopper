@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laprod Multi-Mesin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="title">INPUT DATA PRODUKSI MULTI-MESIN</h2>
+        <p class="subtitle">Isi data semua mesin terlebih dahulu sebelum dikirim ke WA</p>
+
+        <div class="header-inputs">
+            <div class="input-box">
+                <label>Shift</label>
+                <input type="text" id="inp-shift" placeholder="Contoh: 2A">
+            </div>
+            <div class="input-box">
+                <label>Nama Pengisi</label>
+                <input type="text" id="inp-nama" placeholder="Contoh: Dede">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabelProduksi">
+                <thead>
+                    <tr>
+                        <th>No. Mesin</th>
+                        <th>Injector</th>
+                        <th>Warna</th>
+                        <th>Qty</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTabel">
+                    <tr>
+                        <td><input type="text" class="inp-mesin" placeholder="Misal: 01"></td>
+                        <td><input type="text" class="inp-injector" placeholder="Misal: Inj A"></td>
+                        <td><input type="text" class="inp-warna" placeholder="Black"></td>
+                        <td><input type="number" class="inp-qty" placeholder="1500"></td>
+                        <td><button class="btn-hapus" onclick="hapusBaris(this)">❌</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="action-layout">
+            <button class="btn btn-add" onclick="tambahBaris()">➕ Tambah Baris Mesin</button>
+            <button class="btn btn-whatsapp" onclick="kirimWhatsApp()">📲 Kirim Semua ke WhatsApp (1 Pesan)</button>
+            <button class="btn btn-reset" onclick="resetSemua()">🔄 Reset Tabel</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

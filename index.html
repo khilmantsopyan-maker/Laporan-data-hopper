@@ -14,7 +14,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f1f5f9;
         }
-        /* Custom border hitam lebih tegas untuk input */
+        /* Custom border hitam tegas untuk input */
         .input-dark-border {
             border: 1.5px solid #1e293b !important;
         }
@@ -130,9 +130,9 @@
 
         function inisialisasiData() {
             updateTanggal();
-            const simpananShift = localStorage.getItem('laprod_shift_v11');
-            const simpananNama = localStorage.getItem('laprod_nama_v11');
-            const simpananMesin = localStorage.getItem('laprod_mesin_v11');
+            const simpananShift = localStorage.getItem('laprod_shift_v12');
+            const simpananNama = localStorage.getItem('laprod_nama_v12');
+            const simpananMesin = localStorage.getItem('laprod_mesin_v12');
 
             if (simpananShift) document.getElementById('inp-shift').value = simpananShift;
             if (simpananNama) document.getElementById('inp-nama').value = simpananNama;
@@ -293,9 +293,9 @@
             const shift = document.getElementById('inp-shift').value;
             const nama = document.getElementById('inp-nama').value;
 
-            localStorage.setItem('laprod_shift_v11', shift);
-            localStorage.setItem('laprod_nama_v11', nama);
-            localStorage.setItem('laprod_mesin_v11', JSON.stringify(dataMesin));
+            localStorage.setItem('laprod_shift_v12', shift);
+            localStorage.setItem('laprod_nama_v12', nama);
+            localStorage.setItem('laprod_mesin_v12', JSON.stringify(dataMesin));
         }
 
         function konfirmasiReset() {
@@ -303,9 +303,9 @@
                 document.getElementById('inp-shift').value = '';
                 document.getElementById('inp-nama').value = '';
                 dataMesin = [buatStrukturMesinBaru()];
-                localStorage.removeItem('laprod_shift_v11');
-                localStorage.removeItem('laprod_nama_v11');
-                localStorage.removeItem('laprod_mesin_v11');
+                localStorage.removeItem('laprod_shift_v12');
+                localStorage.removeItem('laprod_nama_v12');
+                localStorage.removeItem('laprod_mesin_v12');
                 renderTampilan();
             }
         }
@@ -321,19 +321,17 @@
 
             const tgl = document.getElementById('date-text').innerText;
             
-            let pesan = `*LAPORAN STOCK HOPPER IP*\n`;
-            pesan += `📅 *Tanggal:* ${tgl}\n`;
-            pesan += `⏰ *Shift:* ${shift}\n`;
-            pesan += `👤 *Operator:* ${nama}\n`;
-            pesan += `-----------------------------------\n\n`;
-
             let totalQty = 0;
             let adaIsi = false;
             let daftarWarning = [];
-            let currentLineInMsg = null;
 
-            dataMesin.forEach((item, i) => {
-                const noM = item.noMesin ? `Mesin ${item.noMesin}` : 'Mesin -';
+            // Objek untuk mengelompokkan mesin berdasarkan Line
+            let lineGroups = {};
+
+            dataMesin.forEach((item) => {
+                const noMesinRaw = item.noMesin.trim();
+                const numOnly = parseInt(noMesinRaw.replace(/\D/g, ''), 10);
+                
                 const isSame = item.isSameInjector !== false;
 
                 const m1 = (item.inj1.model || '').trim();
@@ -350,43 +348,45 @@
                 if (inj1Isi || inj2Isi) {
                     adaIsi = true;
 
-                    // Hitung Line otomatis khusus untuk Laporan WA (2 Mesin per Line)
-                    const lineNum = Math.floor(i / 2) + 1;
-
-                    // Cetak Header Line di WA jika berganti Line
-                    if (currentLineInMsg !== lineNum) {
-                        currentLineInMsg = lineNum;
-                        pesan += `🏭 *--- LINE ${lineNum} ---*\n`;
+                    // Hitung Line berdasarkan Nomor Mesin Riil (Mesin 1-2 = Line 1, Mesin 25-26 = Line 13)
+                    let lineNum = 999; // Default jika tanpa angka
+                    if (!isNaN(numOnly) && numOnly > 0) {
+                        lineNum = Math.ceil(numOnly / 2);
                     }
+
+                    if (!lineGroups[lineNum]) {
+                        lineGroups[lineNum] = [];
+                    }
+
+                    const displayMesin = noMesinRaw ? `Mesin ${noMesinRaw}` : 'Mesin -';
 
                     if (isSame) {
                         totalQty += q1;
                         if (q1 < 50) {
-                            pesan += `• ${noM} | A & B | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(STOCK MINIM)*\n`;
-                            daftarWarning.push(`${noM} (A&B): ${q1} kg`);
+                            lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(STOCK MINIM)*`);
+                            daftarWarning.push(`${displayMesin} (A&B): ${q1} kg`);
                         } else {
-                            pesan += `• ${noM} | A & B | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg\n`;
+                            lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
                         }
                     } else {
                         totalQty += (q1 + q2);
                         if (inj1Isi) {
                             if (q1 < 50) {
-                                pesan += `• ${noM} | A | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(STOCK MINIM)*\n`;
-                                daftarWarning.push(`${noM} (Inj A): ${q1} kg`);
+                                lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(STOCK MINIM)*`);
+                                daftarWarning.push(`${displayMesin} (Inj A): ${q1} kg`);
                             } else {
-                                pesan += `• ${noM} | A | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg\n`;
+                                lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
                             }
                         }
                         if (inj2Isi) {
                             if (q2 < 50) {
-                                pesan += `• ${noM} | B | ${m2 || '-'} | ${w2 || '-'} | *${q2} kg* ⚠️ *(STOCK MINIM)*\n`;
-                                daftarWarning.push(`${noM} (Inj B): ${q2} kg`);
+                                lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | *${q2} kg* ⚠️ *(STOCK MINIM)*`);
+                                daftarWarning.push(`${displayMesin} (Inj B): ${q2} kg`);
                             } else {
-                                pesan += `• ${noM} | B | ${m2 || '-'} | ${w2 || '-'} | ${q2} kg\n`;
+                                lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | ${q2} kg`);
                             }
                         }
                     }
-                    pesan += `\n`;
                 }
             });
 
@@ -394,6 +394,28 @@
                 alert('Isi minimal satu data mesin!');
                 return;
             }
+
+            let pesan = `*LAPORAN STOCK HOPPER IP*\n`;
+            pesan += `📅 *Tanggal:* ${tgl}\n`;
+            pesan += `⏰ *Shift:* ${shift}\n`;
+            pesan += `👤 *Operator:* ${nama}\n`;
+            pesan += `-----------------------------------\n\n`;
+
+            // Urutkan Line dari terkecil ke terbesar
+            const sortedLines = Object.keys(lineGroups).sort((a, b) => parseInt(a) - parseInt(b));
+
+            sortedLines.forEach((line) => {
+                if (line === "999") {
+                    pesan += `🏭 *--- LAIN-LAIN ---*\n`;
+                } else {
+                    pesan += `🏭 *--- LINE ${line} ---*\n`;
+                }
+
+                lineGroups[line].forEach(barisText => {
+                    pesan += `${barisText}\n`;
+                });
+                pesan += `\n`;
+            });
 
             pesan += `-----------------------------------\n`;
             pesan += `📊 *TOTAL STOCK:* *${totalQty.toLocaleString('id-ID')} Kg*\n`;
